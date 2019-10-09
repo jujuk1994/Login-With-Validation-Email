@@ -1,0 +1,153 @@
+﻿@{
+    ViewBag.Title = "Home Page";
+}
+<html>
+<body>
+    <div class="container" style="margin-top:10%">
+        <div class="row">
+            <div class="col-md-4 col-md-offset-4 alert alert-info">
+                <h3 class="text-center">Login</h3>
+                <form id="LoginForm">
+                    <div id="msg"><ul style="color:red">Invalid Username or Password</ul></div>
+                    <div class="form-group">
+                        <div class="input-group">
+                            <span class="input-group-addon"><i class="glyphicon glyphicon-envelope"></i></span>
+                            <input type="email" placeholder="Email" name="Email" id="logEmail" class="form-control" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="input-group">
+                            <span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span>
+                            <input type="password" placeholder="Password" name="Password" id="logPassword" class="form-control" />
+                        </div>
+                    </div>
+                </form>
+                <div class="form-group">
+                    <button type="submit" onclick="Login()" class="btn btn-info form-control"><i class="glyphicon glyphicon-log-in"></i> Login</button>
+                </div>
+                <div class="form-group">
+                    <a style="float:left">Forget Password ?</a><a style="float:right;cursor:pointer;" onclick="signUp()">Sign Up</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="idModalLogin" class="modal fade" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <a href="#" class="close" data-dismiss="modal">&times;</a>
+                    <h4 class="modal-title">Registration Form</h4>
+                    <div id="message1">
+                        <div class="alert alert-success">
+                            <span class="glyphicon glyphicon-ok"></span><strong>Succes Message ! <br />
+                            Send an email to your email with confirmation link!
+                            Please check your email
+                            </strong>
+                        </div>
+                    </div>
+                    <div id="message2">
+                        <div class="alert alert-danger">
+                            <span class="glyphicon glyphicon-remove"></span><strong>Error Message ! Your Registratiion is Not Complete</strong>
+                        </div>
+                    </div>
+                </div>
+                <div id="idBodyModalLogin" class="modal-body">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-md-12  alert alert-info">
+                                <form id="RegisForm">
+
+                                    <div class="form-group">
+                                        <div class="input-group">
+                                            <span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
+                                            <input type="text" placeholder="Username" name="Username" id="user" class="form-control" />
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <div class="input-group">
+                                            <span class="input-group-addon"><i class="glyphicon glyphicon-envelope"></i></span>
+                                            <input type="email" placeholder="Email" name="Email" id="email" class="form-control" />
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="input-group">
+                                            <span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span>
+                                            <input type="password" placeholder="Password" name="Password" id="password" class="form-control" />
+                                        </div>
+                                    </div>
+
+                                </form>
+                                <div class="form-group">
+                                    <button class="btn btn-info form-control" type="submit" onclick="SaveForm()" style="width:320px"><i class="glyphicon glyphicon-check"> Submit</i></button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                        </div>
+                    </div>
+                </div>
+</body>
+</html>
+<script>
+    function signUp() {
+        $("#idModalLogin").modal();
+        $("#message1").hide();
+        $("#message2").hide();
+    };
+
+    function SaveForm() {
+        var name = $("#user").val();
+        var pwd = $("#password").val();
+        var email = $("#email").val();
+
+
+        if (name=="" || pwd=="" || email=="") {
+            $("#message1").hide();
+            $("#message2").show();
+            return false;
+
+        }
+
+        var data = $("#RegisForm").serialize();
+
+     
+
+        $.ajax({
+            type: "post",
+            data: data,
+            url: "/Home/SaveData",
+            success: function (result) {
+               
+                $("#message1").show();
+                $("#message2").hide();
+                $("#RegisForm")[0].reset();
+            }
+        })
+    };
+
+    //:ogin System
+    $("#msg").hide();
+
+    var Login = function () {
+        var data = $("#LoginForm").serialize();
+        $.ajax({
+            type: "post",
+            url: "/Home/CheckValidUser",
+            data:data,
+            success: function (result) {
+                if (result=="Fail") {
+                    $("#LoginForm")[0].reset();
+                    $("#msg").show();
+                }
+                else {
+                    window.location.href = "/Home/AfterLogin";
+                    $("#msg").hide();
+                }
+            }
+        })
+    }
+
+</script>
